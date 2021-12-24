@@ -18,9 +18,14 @@ class Location {
         longitude = position!.longitude;
         latitude = position!.latitude;
       }
-      print(position);
     } catch (e) {
       print(e);
     }
   }
 }
+
+
+    // int lon = decodedData['coord']['lon'];
+    // int id = decodedData['weather'][0]['id'];
+    // double temp = decodedData['main']['temp'];
+    // String description = decodedData['weather'][0]['description'];
