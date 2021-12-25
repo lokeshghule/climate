@@ -1,10 +1,8 @@
 import 'package:climate/screens/location_screen.dart';
-import 'package:climate/services/networking.dart';
+import 'package:climate/services/weather.dart';
+
 import 'package:flutter/material.dart';
-
-import '../services/location.dart';
-
-const apiKey = 'd0481bdcc3c0e8f35179b7d4942e4c06';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class LoadingScreen extends StatefulWidget {
   const LoadingScreen({Key? key}) : super(key: key);
@@ -14,24 +12,15 @@ class LoadingScreen extends StatefulWidget {
 }
 
 class _LoadingScreenState extends State<LoadingScreen> {
-  double? latitude;
-  double? longitude;
-
   void getLocationData() async {
-    Location location = Location();
-    await location.getCurrentLocation();
-
-    latitude = location.latitude;
-    longitude = location.longitude;
-
-    NetworkHelper networkHelper = NetworkHelper(
-        url:
-            'https://api.openweathermap.org/data/2.5/weather?lat=${latitude!.round()}&lon=${longitude!.round()}&appid=$apiKey');
-
-    var weatherData = await networkHelper.getData();
+    dynamic weatherData = await WeatherModel().getLocationWeather();
 
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => LocationScreen()));
+        context,
+        MaterialPageRoute(
+            builder: (context) => LocationScreen(
+                  data: weatherData,
+                )));
   }
 
   @override
@@ -43,11 +32,43 @@ class _LoadingScreenState extends State<LoadingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: Colors.blue,
         body: Center(
-      child: ElevatedButton(
-        child: Text("button"),
-        onPressed: () {},
-      ),
-    ));
+          child: SpinKitRing(
+            color: Colors.white,
+          ),
+        ));
   }
 }
+
+
+
+
+// showDialog<String>(
+//       context: context,
+//       builder: (BuildContext context) => AlertDialog(
+//         title: const Text('Allow app to acess your contacts list ?'),
+//         content: const Text(
+//             'You need to allow contact access in parameters for use your contacts list in the app'),
+//         actions: <Widget>[
+
+//           // if user deny again, we do nothing
+//           TextButton(
+//             onPressed: () => Navigator.pop(context),
+//             child: const Text('Don\'t allow'),
+//           ),
+
+//           // if user is agree, you can redirect him to the app parameters :)
+//           TextButton(
+//             onPressed: () {
+//               openAppSettings();
+//               Navigator.pop(context);
+//             },
+//             child: const Text('Allow'),
+//           ),
+
+//         ],
+//       ),
+//     );
+//     return;
+//   }

@@ -1,13 +1,46 @@
+import 'package:climate/services/weather.dart';
 import 'package:flutter/material.dart';
 
 class LocationScreen extends StatefulWidget {
-  const LocationScreen({Key? key}) : super(key: key);
+  final data;
+  LocationScreen({this.data});
 
   @override
   _LocationScreenState createState() => _LocationScreenState();
 }
 
 class _LocationScreenState extends State<LocationScreen> {
+  WeatherModel weather = WeatherModel();
+  int? temp;
+  int? condition;
+  String? city;
+  String? message;
+  String? icon;
+  void updateUI(dynamic weatherData) {
+    setState(() {
+      if (weatherData == null) {
+        temp = 0;
+        condition = 0;
+        city = '';
+        message = 'Error fetching location';
+        icon = ":(";
+      } else {
+        double t = weatherData['main']['temp'];
+        temp = t.toInt();
+        condition = weatherData['weather'][0]['id'];
+        city = weatherData['name'];
+        message = '${weather.getMessage(temp!)} in $city';
+        icon = weather.getWeatherIcon(condition!);
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    updateUI(widget.data);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,9 +55,16 @@ class _LocationScreenState extends State<LocationScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Icon(
-                      Icons.send,
-                      size: 32.0,
+                    TextButton(
+                      onPressed: () async {
+                        var weatherData = await weather.getLocationWeather();
+                        updateUI(weatherData);
+                      },
+                      child: Icon(
+                        Icons.refresh,
+                        color: Colors.black,
+                        size: 40.0,
+                      ),
                     ),
                     Icon(
                       Icons.location_city,
@@ -33,25 +73,34 @@ class _LocationScreenState extends State<LocationScreen> {
                   ],
                 ),
               ),
-              Center(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '32',
-                      style: TextStyle(
-                        fontSize: 82,
-                        fontWeight: FontWeight.bold,
-                      ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    temp.toString() + '°',
+                    style: TextStyle(
+                      fontSize: 82,
+                      fontWeight: FontWeight.bold,
                     ),
-                    Text(
-                      '0C',
-                      style:
-                          TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                    )
-                  ],
+                  ),
+                  Text(
+                    icon!,
+                    style: TextStyle(fontSize: 82),
+                  ),
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(30.0, 30, 30, 60),
+                child: Text(
+                  message!,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              )
+              ),
             ],
           ),
         ),

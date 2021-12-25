@@ -1,4 +1,7 @@
+//import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:app_settings/app_settings.dart';
 
 class Location {
   double? longitude;
@@ -9,8 +12,7 @@ class Location {
       LocationPermission permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied ||
           permission == LocationPermission.deniedForever) {
-        print("Location Acces denied");
-        return;
+        return null;
       } else {
         position = await Geolocator.getCurrentPosition(
             desiredAccuracy: LocationAccuracy.low);
@@ -23,9 +25,3 @@ class Location {
     }
   }
 }
-
-
-    // int lon = decodedData['coord']['lon'];
-    // int id = decodedData['weather'][0]['id'];
-    // double temp = decodedData['main']['temp'];
-    // String description = decodedData['weather'][0]['description'];
