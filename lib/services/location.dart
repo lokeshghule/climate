@@ -1,7 +1,4 @@
-//import 'package:flutter/material.dart';
-import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:app_settings/app_settings.dart';
 
 class Location {
   double? longitude;
